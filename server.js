@@ -341,6 +341,27 @@ function today() {
 }
 
 // ── Start ─────────────────────────────────────────────────────────────────────
+app.get("/cache/clear", (req, res) => {
+  cache.flushAll();
+  res.json({ message: "Cache cleared", timestamp: new Date().toISOString() });
+});
+
+app.get("/debug/jgb", async (req, res) => {
+  try {
+    const { fetchJGB } = require("./fetchers/jgb");
+    const data = await fetchJGB();
+    const dates = Object.keys(data).sort();
+    res.json({
+      total_dates: dates.length,
+      earliest: dates[0] || null,
+      latest: dates[dates.length - 1] || null,
+      sample: dates.length > 0 ? data[dates[dates.length - 1]] : null
+    });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`\n🏛  Bond Yield Backend running on port ${PORT}`);
   console.log(`   Health: http://localhost:${PORT}/health`);
