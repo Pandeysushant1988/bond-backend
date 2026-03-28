@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 async function parseMofCsv(text) {
   const byDate = {};
-  const lines = text.split("\n").filter(l => l.trim());
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
   if (lines.length < 3) return byDate;
   const wanted = ["1Y","2Y","3Y","5Y","7Y","10Y","20Y","30Y"];
   const header = lines[1].split(",").map(h => h.trim());
@@ -12,7 +12,7 @@ async function parseMofCsv(text) {
     const cols = line.split(",").map(c => c.trim());
     if (!cols[0] || !cols[0].includes("/")) continue;
     const date = cols[0].replace(/\//g, "-");
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    if (!date.length >= 8) continue;
     const yields = {};
     Object.entries(colMap).forEach(([idx, tenor]) => {
       const v = cols[+idx];
