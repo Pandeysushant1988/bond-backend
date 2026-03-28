@@ -11,7 +11,7 @@ async function parseMofCsv(text) {
   for (const line of lines.slice(2)) {
     const cols = line.split(",").map(c => c.trim());
     if (!cols[0] || !cols[0].includes("/")) continue;
-    const date = cols[0].replace(/\//g, "-");
+    const parts = cols[0].split("/"); const date = parts[0] + "-" + parts[1].padStart(2,"0") + "-" + parts[2].padStart(2,"0");
     if (!date.length >= 8) continue;
     const yields = {};
     Object.entries(colMap).forEach(([idx, tenor]) => {
